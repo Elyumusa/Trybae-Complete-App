@@ -1,0 +1,56 @@
+<script src="https://developer.tingg.africa/checkout/v2/tingg-checkout.js"></script>
+
+<button class="awesome-checkout-button"></button>
+
+<script type="text/javascript">
+const payload = {
+            "merchantTransactionID": "1e4r4342i095jf",
+            "requestAmount": '100.50',
+            "currencyCode": "ZMW",
+            "accountNumber": "ACC12345",
+            "serviceCode": "E-CDEV6118",
+            "dueDate": "2021-06-28 18:50:20",
+            "requestDescription": "Getting E-Commerce service",
+            "countryCode": "ZM",
+            "customerFirstName": "John",
+            "customerLastName": "Smith",
+            "MSISDN": '260955363160',
+            "customerEmail": "elyuedu4@gmail.com",
+            'successRedirectUrl': "https://success.com",
+            'failRedirectUrl': 'https://failed.com',
+            "paymentWebhookUrl":
+                "https://hooks.slack.com/services/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"
+          };
+const checkoutType = 'modal'; // or 'modal'
+
+// Render the checkout button
+Tingg.renderPayButton({
+    className: 'awesome-checkout-button', 
+    checkoutType
+});
+
+document
+.querySelector('.awesome-checkout-button')
+.addEventListener('click', function() {
+    
+            //Call the encryption URL to encrypt the params and render checkout
+            function encrypt() {
+                return fetch(
+                    "http://127.0.0.1:8000/trybaePaymentEncryption/",
+                    {
+                        method: 'POST',
+                        body: JSON.stringify(payload),
+                        mode:'cors'
+                    }).then(response => response.json())
+            }
+            encrypt().then(response => {
+                    // Render the checkout page on click event
+                    Tingg.renderCheckout({
+                        checkoutType,
+                        merchantProperties: response,
+                    });
+                }
+            )
+                .catch(error => console.log(error));
+        });
+</script>
